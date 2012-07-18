@@ -18,7 +18,7 @@ module ActiveRecord
           td.integer "#{association_name}_id"
           td.string  "#{association_name}_type"
           td.integer "final_descendant_id"
-          td.integer "final_descendant_type"
+          td.string "final_descendant_type"
         end
 
         yield td if block_given?
