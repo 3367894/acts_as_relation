@@ -122,11 +122,25 @@ module ActiveRecord
 
         code = <<-EndCode
           belongs_to :#{association_name}, :polymorphic => true
+          belongs_to :final_descendant, :polymorphic => true
 
           def specific
             self.#{association_name}
           end
           alias :specific_class :specific
+
+          def get_final_descendant
+            entity = self
+            while entity != entity.specific
+              entity = entity.specific
+            end
+            entity
+          end
+
+          after_create do |instance|
+            instance.final_descendant = instance.get_final_descendant
+            instance.save!
+          end
         EndCode
         class_eval code, __FILE__, __LINE__
       end
