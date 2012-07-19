@@ -129,17 +129,22 @@ module ActiveRecord
           end
           alias :specific_class :specific
 
+          after_create do |instance|
+            instance.set_final_descendant
+          end
+
+          private
+          def set_final_descendant
+            final_descendant = get_final_descendant
+            save!
+          end
+           
           def get_final_descendant
             entity = self
             while entity != entity.specific
               entity = entity.specific
             end
             entity
-          end
-
-          after_create do |instance|
-            instance.final_descendant = instance.get_final_descendant
-            instance.save!
           end
         EndCode
         class_eval code, __FILE__, __LINE__
